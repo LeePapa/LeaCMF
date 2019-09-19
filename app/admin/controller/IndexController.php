@@ -4,7 +4,7 @@ namespace app\admin\controller;
 
 use think\Request;
 
-class Index
+class IndexController extends BaseController
 {
     /**
      * 显示资源列表
@@ -12,7 +12,7 @@ class Index
      */
     public function index()
     {
-        //
+        exit('2');
     }
 
     /**

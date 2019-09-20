@@ -60,7 +60,7 @@
         </li>
       </ul>
     </div>
-    {php}$__NAV__ = app()->auth->getMenu();{/php}
+    {php}$__MENU__ = app()->auth->getMenu();$__CURMB__=app()->auth->getgetCrumb();$__PIDS__=array_coloum($__CURMB__,'id');dump($__MENU__,$__CURMB__,$__PIDS__);exit;{/php}
     {include file="public/menu" /}
     <div class="main layui-body">
       <div class="main-header">

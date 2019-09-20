@@ -8,6 +8,7 @@ use app\admin\model\AuthRule;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\facade\Request;
 
 class Auth
 {
@@ -278,8 +279,12 @@ class Auth
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getCrumb($path)
+    public function getCrumb($path = "")
     {
+        if (!$path) {
+            $path = strtolower('/' . Request::controller() . "/" . Request::action());
+        }
+
         //所有菜单rules
         $list = $this->getAuthRules();
         $self = $list[$path] ?? [];
@@ -301,7 +306,7 @@ class Auth
      * @param int    $root
      * @return array
      */
-    public function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root = 0)
+    public function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = 'child', $root = 0)
     {
         // 创建Tree
         $tree = [];

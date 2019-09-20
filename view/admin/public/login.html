@@ -63,7 +63,7 @@
         $.post('{$Request.url}', data.field, function (res) {
           layer.msg(res.msg, function () {
             if (res.code > 0) {
-              window.location.href = "{:url('/')}";
+              window.location.href = "{:url('/admin')}";
             } else {
               $('#captcha-src').click();
             }

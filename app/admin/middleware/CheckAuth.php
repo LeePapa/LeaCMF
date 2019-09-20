@@ -8,19 +8,20 @@ use think\Request;
 class CheckAuth
 {
     const NO_NEED_LOGIN = [
-        "public/*",
+        "/public/*",
     ];
 
     public function handle(Request $request, \Closure $next)
     {
-        $identity = Auth::ins()->user();
-        $url      = $request->pathinfo();
-
+        //注入auth
+        bind("auth", Auth::ins());
+        $url = strtolower('/' . $request->controller() . "/" . $request->action());
         if ($this->isUrl($url, self::NO_NEED_LOGIN)) {
             return $next($request);
         }
 
         //未登录，去登录
+        $identity = Auth::ins()->user();
         if (!isset($identity['id'])) {
             return redirect('public/login');
         }
@@ -41,7 +42,9 @@ class CheckAuth
 
 
     /**
-     * 检测权限
+     * 检测url
+     * @param $url
+     * @param $urls
      * @return bool
      */
     public function isUrl($url, $urls)

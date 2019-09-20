@@ -39,6 +39,13 @@ class Auth
      */
     protected $auth_rules = [];
 
+
+    /**
+     * 有权限的角色
+     * @var array
+     */
+    protected $auth_roles = [];
+
     /**
      * 生成实例
      * @param int $uid
@@ -67,7 +74,7 @@ class Auth
         $admin = cache($key);
         if (!$admin) {
             $admin = (new Admin())->findOrEmpty($uid);
-            cache($key, $admin, 1800, self::CACHE_TAG);
+            cache($key, $admin, 300, self::CACHE_TAG);
         }
         $this->identity = $admin;
     }
@@ -151,7 +158,7 @@ class Auth
                 } else {
                     $rules_ids = [];
                 }
-                cache($key, $rules_ids, 1800, 'admin:auth');
+                cache($key, $rules_ids, 300, 'admin:auth');
             }
             $this->auth_rule_ids = $rules_ids;
         }
@@ -180,7 +187,7 @@ class Auth
                     $tmp[$val['name']] = $val;
                 }
                 $list = $tmp;
-                cache($key, $list, 1800, self::CACHE_TAG);
+                cache($key, $list, 300, self::CACHE_TAG);
             }
             $this->auth_rules = $list;
         }
@@ -205,13 +212,40 @@ class Auth
             return true;
         }
         $list = $this->getAuthRules();
-        $self = $list[strtolower('/' . $path)] ?? [];
+        $self = $list[$path] ?? [];
         if ($self && in_array($self['id'], $rule_ids)) {
             return true;
         }
         return false;
     }
 
+    /**
+     * 判断角色
+     * @param $role
+     * @return bool
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
+     */
+    public function isRole($role): bool
+    {
+        if (!$this->auth_roles) {
+            $admin = $this->user();
+            $key   = "sys:crumb:" . $admin['id'] ?? 0;
+            $roles = cache($key);
+            if (!$roles) {
+                if (!isset($admin['auth_group_ids']) || empty($admin['auth_group_ids'])) {
+                    $roles = [];
+                } else {
+                    $roles = (new AuthGroup())->select(explode(',', $admin['auth_group_ids']))->toArray();
+                    $roles = array_column($roles, 'name');
+                }
+                cache($key, $roles, 300, self::CACHE_TAG);
+            }
+            $this->auth_rules = $roles;
+        }
+        return in_array($role, $this->auth_rules);
+    }
 
     /**
      * 获取菜单
@@ -230,9 +264,8 @@ class Auth
                 $query->where('id', 'in', $rule_ids);
             })->where('status', 1)->order('pid asc,sort asc,id asc')->select()->toArray();
             $menu     = $this->list_to_tree($menu);
-            cache($key, $menu, 1800, self::CACHE_TAG);
+            cache($key, $menu, 300, self::CACHE_TAG);
         }
-
         return $menu;
     }
 

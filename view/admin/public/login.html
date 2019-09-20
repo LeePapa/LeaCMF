@@ -34,7 +34,7 @@
           <div class="layui-form-item">
             <label class="layui-form-label">验证码</label>
             <div class="layui-input-inline" style="width:105px">
-              <input type="text" name="captcha" maxlength="4" placeholder="验证码" autocomplete="off" class="layui-input ">
+              <input type="text" name="captcha" maxlength="5" placeholder="验证码" autocomplete="off" class="layui-input ">
             </div>
             <div class="layui-input-inline" style="width:100px">
               <img src="" alt="captcha" id="captcha-src" />
@@ -61,12 +61,13 @@
       $('#captcha-src').click();
       form.on('submit(*)', function (data) {
         $.post('{$Request.url}', data.field, function (res) {
-          layer.msg(res.msg);
-          if (res.code > 0) {
-            window.location.href = res.url;
-          } else {
-            $('#captcha-src').click();
-          }
+          layer.msg(res.msg, function () {
+            if (res.code > 0) {
+              window.location.href = "{:url('/')}";
+            } else {
+              $('#captcha-src').click();
+            }
+          });
         });
         return false;
       });

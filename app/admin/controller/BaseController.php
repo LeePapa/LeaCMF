@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace app\admin\controller;
 
+use app\admin\service\Auth;
 use think\App;
 use think\exception\ValidateException;
 use think\Validate;
@@ -35,12 +36,6 @@ abstract class BaseController
      * @var array
      */
     protected $middleware = [];
-
-    /**
-     * 访问身份
-     * @var array
-     */
-    protected $identity = [];
 
     /**
      * 构造方法

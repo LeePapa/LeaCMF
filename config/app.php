@@ -6,6 +6,8 @@
 use think\facade\Env;
 
 return [
+    //应用名称
+    "app_name"         => Env::get("app.name", "LeaCMF"),
     // 应用地址
     'app_host'         => Env::get('app.host', ''),
     // 应用的命名空间

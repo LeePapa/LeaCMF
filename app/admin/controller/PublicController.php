@@ -2,83 +2,39 @@
 
 namespace app\admin\controller;
 
+use think\facade\View;
 use think\Request;
 
-class PublicController
+class PublicController extends BaseController
 {
-    /**
-     * 显示资源列表
-     *
-     * @return \think\Response
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
-     * 显示创建资源表单页.
-     *
-     * @return \think\Response
+     * 登录
+     * @return \think\response\View
      */
-    public function create()
+    public function login()
     {
-        //
+        if ($this->request->isPost()) {
+            $post     = $this->request->only(['username', 'password', 'captcha'], 'post');
+            $validate = $this->validate($post, [
+                'username|用户名' => 'require|max:32',
+                'password|密码'  => 'require|length:6,16',
+                'captcha|验证码'  => 'require|captcha',
+            ]);
+
+
+        } else {
+            return view('login');
+        }
     }
 
-    /**
-     * 保存新建的资源
-     *
-     * @param  \think\Request  $request
-     * @return \think\Response
-     */
-    public function save(Request $request)
-    {
-        //
-    }
 
     /**
-     * 显示指定的资源
-     *
-     * @param  int  $id
+     * 获取验证码
      * @return \think\Response
      */
-    public function read($id)
+    public function captcha()
     {
-        //
-    }
-
-    /**
-     * 显示编辑资源表单页.
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * 保存更新的资源
-     *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function delete($id)
-    {
-        //
+        return captcha();
     }
 }
